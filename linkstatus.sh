@@ -11,8 +11,8 @@
 #       NOTES   : --
 #       PLATFORM: Linux/Solaris
 #       DSI     : All
-#       AUTHOR  : Yogesh Ananad, Satheesh Subran
-#       COMPANY : Roamware Inc., Copyright 2005
+#       AUTHOR  : Satheesh Subran
+#       COMPANY : 
 #       VERSION : 5.00
 #       CREATED : 29-05-2012
 #      REVISION : 12-04-2016
