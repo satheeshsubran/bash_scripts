@@ -1,0 +1,109 @@
+#!/bin/sh
+
+# - Configuration settings
+user="sat"
+ip="11.7.0.70"
+key="/root/.ssh/id_rsa"
+destn_dir="/mnt/precords/router"
+local_dir="/tmp"
+backupfile="backup-${HOSTNAME}-$(date +%F).tar.gz"
+logfile="${local_dir}/backup.log"
+
+initialize(){
+        export user ip key \
+                destn_dir local_dir \
+                backupfile logfile
+        > $logfile
+}
+
+usage(){
+
+        echo "Unknown command"
+        echo
+        echo "Usage : ./backup_router {backup|restore}"
+        echo
+
+        exit 2
+}
+
+upload(){
+[ ! -z "$(which scp)" ] &&
+        { log "Starting the upload.." ;
+          scp -i ${key} -p \
+                ${local_dir}/${backupfile} \
+                ${user}@${ip}:${destn_dir} ;
+          [ $? -eq 0 ] &&
+                { log "Transfer of file $backupfile is successful" ;
+                rm -f $backupfile ; }  ||
+                log "Transfer of file $backupfile failed" ; } ||
+
+        { log "No scp command found, upload failed" ; }
+}
+
+download(){
+[ ! -z "$(which scp)" ] &&
+        { log "Starting the download.." ;
+        scp -p -i ${key} \
+                ${user}@${ip}:${destn_dir}/${backupfile} \
+                ${local_dir} 2>/dev/null ; }
+        if [ $? -eq 0 ]
+        then
+                log "Backup file $backupfile found" ;
+                return 0
+        else
+                log "Backup file $backupfile not found" ;
+                return 1
+        fi
+
+}
+
+log(){
+        logdate=$(date)
+        msg=$1
+
+        echo "$logdate| $msg" >> $logfile
+}
+
+backup(){
+
+        # Generate backup
+        sysupgrade -b \
+                ${local_dir}/backup-${HOSTNAME}-$(date +%F).tar.gz
+        ls ${local_dir}/backup-*.tar.gz
+        [ $? -eq 0 ] &&
+        { log "Backup file  localy created under $local_dir" ;} ||
+        { log "Backup failed. Check the log /tmp/backup.log" ;}
+}
+
+restore(){
+
+        download
+        if [ $? -eq 0 ]
+        then
+                log "Proceeding restoration with backup file $backupfile"
+
+                # Resotration commands
+                sysupgrade -r ${local_dir}/backup-*.tar.gz
+                sleep 5
+                /etc/config/additional_package.sh
+        else
+                log "Restoration from the backup failed"
+                exit 1
+        fi
+}
+
+initialize
+
+if [ "$1" == 'backup' ]
+then
+        backup
+        upload
+
+elif [ "$1" == 'restore' ]
+then
+        restore
+else
+        usage
+fi
+
+exit 0
