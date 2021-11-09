@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # - Configuration settings
-user="sat"
-ip="11.7.0.70"
-key="/root/.ssh/id_rsa"
-destn_dir="/mnt/precords/router"
+user="abc"
+ip="10.0.0.1"
+key="/id_rsa"
+destn_dir="/destination"
 local_dir="/tmp"
 backupfile="backup-${HOSTNAME}-$(date +%F).tar.gz"
 logfile="${local_dir}/backup.log"
