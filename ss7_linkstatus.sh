@@ -1,9 +1,11 @@
 #!/usr/bin/bash
 #===============================================================================
-#       FILE    : linkstatus.sh
-#       USAGE   : linkstatus.sh
+#       FILE    : ss7_linkstatus.sh
+#       USAGE   : ss7_linkstatus.sh
 #
-#   DESCRIPTION : DSI Card Link activation Status
+#   DESCRIPTION : DSI Card Link activation Status (Dialogic). The program
+#                 helps to know the Dialogic SS7 cards link states utilizing
+#                 the 'dsistat' command
 #
 #       OPTIONS : see function 'usage' below
 #  REQUIREMENTS :
